@@ -44,13 +44,14 @@ FSL_TEST_FUNCTION( normal_statements ) {
             dbc.drop_database( L"FSL_Test" );
 
         {
-            {
-                fostlib::dbtransaction transaction( dbc );
-                transaction.execute( fostlib::sql::statement( L"CREATE DATABASE FSL_Test" ) );
-                transaction.commit();
+            try {
+                dbc.create_database( L"FSL_TEST" );
+            } catch ( fostlib::exceptions::exception &e ) {
+                e.info() << L"Whilst performing CREATE DATABASE" << std::endl;
+                throw;
             }
             FSL_CHECK( !dbc.in_transaction() );
-            {
+            try {
                 fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test", L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 
                 fostlib::meta_instance test( L"Test" );
@@ -61,6 +62,9 @@ FSL_TEST_FUNCTION( normal_statements ) {
                 fostlib::dbtransaction transaction( dbc );
                 transaction.create_table( test );
                 transaction.commit();
+            } catch ( fostlib::exceptions::exception &e ) {
+                e.info() << L"Whist creating a table from a meta_instance" << std::endl;
+                throw;
             }
         }
     }

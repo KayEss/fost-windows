@@ -6,43 +6,13 @@
 */
 
 
-#include <fost/db-driver-sql>
-#import <c:\program files\common files\system\ado\msado15.dll> rename( "EOF", "adoEOF" )
-#include <fost/coerce/win.hpp>
-
-#include <fost/exception/not_implemented.hpp>
-#include <fost/exception/transaction_fault.hpp>
-#include <fost/exception/unexpected_eof.hpp>
+#include "ado.hpp"
 
 
 namespace {
 
 
-    class ADOWriter;
-    FSL_EXPORT const class ADOInterface : public fostlib::sql_driver {
-    public:
-        ADOInterface()
-        : sql_driver( L"ado" ) {
-        }
-
-        void create_database( fostlib::dbconnection &dbc, const fostlib::string &name ) const;
-        void drop_database( fostlib::dbconnection &dbc, const fostlib::string &name ) const;
-
-        int64_t next_id( fostlib::dbconnection &dbc, const fostlib::string &counter ) const;
-        int64_t current_id( fostlib::dbconnection &dbc, const fostlib::string &counter ) const;
-        void used_id( fostlib::dbconnection &dbc, const fostlib::string &counter, int64_t value ) const;
-
-        boost::shared_ptr< fostlib::dbinterface::read > reader( fostlib::dbconnection &dbc ) const;
-
-    protected:
-        using fostlib::sql_driver::mangle;
-        fostlib::sql::statement mangle( const fostlib::sql::table_name &name ) const {
-            return fostlib::sql::statement( L"[" ) + fostlib::sql::statement( name.underlying() ) + fostlib::sql::statement( L"]" );
-        }
-        fostlib::sql::statement mangle( const fostlib::sql::column_name &name ) const {
-            return fostlib::sql::statement( L"[" ) + fostlib::sql::statement( name.underlying() ) + fostlib::sql::statement( L"]" );
-        }
-    } c_ado_interface;
+    FSL_EXPORT const ADOInterface c_ado_interface;
 
 
     class ADOReader : public fostlib::dbinterface::read {
@@ -77,7 +47,7 @@ namespace {
         ~ADOWriter() {
             if ( m_cnx ) {
                 m_cnx = NULL;
-                throw fostlib::exceptions::transaction_fault( L"The DBInterface::Write connection must be committed or rolled back" );
+                throw fostlib::exceptions::transaction_fault( L"The ADOWriter connection must be committed or rolled back" );
             }
         }
 
@@ -117,7 +87,7 @@ namespace {
                     c_ado_interface.next_id( m_connection, fostlib::dbconnection::c_commitCountDomain.value() );
 	        } catch ( _com_error &c ) {
                 m_cnx = NULL;
-                throw fostlib::exceptions::com_error( c, L"Error during CommitTrans()" );
+                throw fostlib::exceptions::com_error( c, L"COM error during transaction commit" );
 	        } catch ( ... ) {
                 m_cnx = NULL;
                 throw fostlib::exceptions::transaction_fault( L"Unknown error during transaction commit" );
@@ -266,12 +236,14 @@ void ADOInterface::create_database( fostlib::dbconnection &dbc, const fostlib::s
     ADOReader reader( dbc );
     ADOWriter writer( dbc, reader, false );
     writer.execute( fostlib::sql::statement( L"CREATE DATABASE \"" + name + L"\"" ) );
+    writer.commit();
 }
 
 void ADOInterface::drop_database( fostlib::dbconnection &dbc, const fostlib::string &name ) const {
     ADOReader reader( dbc );
     ADOWriter writer( dbc, reader, false );
     writer.execute( fostlib::sql::statement( L"DROP DATABASE \"" + name + L"\"" ) );
+    writer.commit();
 }
 
 
