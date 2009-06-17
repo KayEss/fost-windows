@@ -18,7 +18,7 @@ FSL_TEST_SUITE( db_ado_express );
 
 
 FSL_TEST_FUNCTION( connect_database ) {
-    fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS;" );
+    fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS;" );
 }
 
 
@@ -26,7 +26,7 @@ FSL_TEST_FUNCTION( normal_statements ) {
     const fostlib::setting< bool > commit_count( L"fost-ado-smoke-test/ado-express.cpp", fostlib::dbconnection::c_commitCount, false );
 
     {
-        fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS;", L"driver={SQL server}; server=.\\SQLEXPRESS;" );
+        fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS;", L"ado/driver={SQL server}; server=.\\SQLEXPRESS;" );
 
         fostlib::recordset rs1( dbc.query( fostlib::sql::statement( L"SELECT 1 WHERE 1=0" ) ) );
         FSL_CHECK( rs1.eof() );
@@ -51,7 +51,7 @@ FSL_TEST_FUNCTION( normal_statements ) {
             }
             FSL_CHECK( !dbc.in_transaction() );
             {
-                fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test", L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
+                fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test", L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 
                 fostlib::meta_instance test( L"Test" );
                 test
@@ -68,7 +68,7 @@ FSL_TEST_FUNCTION( normal_statements ) {
 
 
 FSL_TEST_FUNCTION( select_safeguards ) {
-    fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS;" );
+    fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS;" );
 
     FSL_CHECK_EXCEPTION( fostlib::recordset( dbc.query( fostlib::sql::statement( L"SELECT MAX( not_a_column ) FROM Not_a_table" ) ) ), fostlib::exceptions::com_error& );
 
@@ -79,7 +79,7 @@ FSL_TEST_FUNCTION( select_safeguards ) {
 
 FSL_TEST_FUNCTION( transaction_safeguards_1_setup ) {
     const fostlib::setting< bool > commit_count( L"fost-ado-smoke-test/ado-express.cpp", fostlib::dbconnection::c_commitCount, false );
-    fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
+    fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 
     fostlib::dbtransaction transaction( dbc );
     transaction.execute( fostlib::sql::statement( L"DELETE FROM Test" ) );
@@ -88,7 +88,7 @@ FSL_TEST_FUNCTION( transaction_safeguards_1_setup ) {
 
 FSL_TEST_FUNCTION( transaction_safeguards_2_reuse_transaction ) {
     const fostlib::setting< bool > commit_count( L"fost-ado-smoke-test/ado-express.cpp", fostlib::dbconnection::c_commitCount, false );
-    fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
+    fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 
     { // Check we can't reuse a committed transaction
         fostlib::dbtransaction transaction( dbc );
@@ -104,7 +104,7 @@ FSL_TEST_FUNCTION( transaction_safeguards_2_reuse_transaction ) {
 
 FSL_TEST_FUNCTION( transaction_safeguards_3_duplicate_key ) {
     const fostlib::setting< bool > commit_count( L"fost-ado-smoke-test/ado-express.cpp", fostlib::dbconnection::c_commitCount, false );
-    fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
+    fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 
     { // Check that a duplicate key results in an error
         fostlib::dbtransaction transaction( dbc );
@@ -115,7 +115,7 @@ FSL_TEST_FUNCTION( transaction_safeguards_3_duplicate_key ) {
 
 FSL_TEST_FUNCTION( transaction_safeguards_4_dropped_transaction ) {
     const fostlib::setting< bool > commit_count( L"fost-ado-smoke-test/ado-express.cpp", fostlib::dbconnection::c_commitCount, false );
-    fostlib::dbconnection dbc( L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
+    fostlib::dbconnection dbc( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 
     { // Check that a dropped transaction is aborted
         fostlib::dbtransaction transaction( dbc );
@@ -130,7 +130,7 @@ FSL_TEST_FUNCTION( transaction_safeguards_4_dropped_transaction ) {
 //    fostlib::dbtransaction transaction( dbc );
 //    transaction.execute( L"INSERT INTO Test VALUES (2, 'Goodbye')" );
 
-//    fostlib::dbconnection cnx( L"driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
+//    fostlib::dbconnection cnx( L"ado/driver={SQL server}; server=.\\SQLEXPRESS; database=FSL_Test" );
 //    FSL_CHECK_EQ( fostlib::coerce< long >( cnx.recordset( L"SELECT COUNT(id) FROM Test" ).field( 0 ) ), 1 );
 //    transaction.commit();
 //}

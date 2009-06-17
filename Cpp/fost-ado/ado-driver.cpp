@@ -8,6 +8,7 @@
 
 #include <fost/db-driver-sql>
 #import <c:\program files\common files\system\ado\msado15.dll> rename( "EOF", "adoEOF" )
+#include <fost/coerce/win.hpp>
 
 #include <fost/exception/not_implemented.hpp>
 #include <fost/exception/transaction_fault.hpp>
@@ -18,7 +19,7 @@ namespace {
 
 
     class ADOWriter;
-    const class ADOInterface : public fostlib::sql_driver {
+    FSL_EXPORT const class ADOInterface : public fostlib::sql_driver {
     public:
         ADOInterface()
         : sql_driver( L"ado" ) {
