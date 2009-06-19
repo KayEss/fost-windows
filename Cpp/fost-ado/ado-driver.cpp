@@ -219,7 +219,10 @@ namespace {
         }
 
         fostlib::json to_json() const {
-            throw fostlib::exceptions::not_implemented( L"json RSInterface::to_json() const" );
+            fostlib::json row = fostlib::json::object_t();
+            for ( std::map< fostlib::string, std::size_t >::const_iterator f( m_fields.begin() ); f != m_fields.end(); ++f )
+                ( fostlib::jcursor() / f->first ).insert( row, field( f->second ) );
+            return row;
         }
     };
 

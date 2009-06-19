@@ -37,6 +37,10 @@ FSL_TEST_FUNCTION( normal_statements ) {
         FSL_CHECK( !rs2.eof() );
         FSL_CHECK_EQ( fostlib::coerce< int >( rs2.field( 0 ) ), 1234 );
         FSL_CHECK_EQ( fostlib::coerce< int >( rs2.field( L"c0" ) ), 1234 );
+        FSL_CHECK_EQ(
+            fostlib::json::unparse( rs2.to_json(), true ),
+            fostlib::json::unparse( fostlib::json::parse( L"{\"c0\":\"1234\"}" ), true )
+        );
 
         fostlib::recordset databases( dbc.query( fostlib::sql::statement( L"SELECT dbid FROM sysdatabases WHERE name='FSL_Test'" ) ) );
 
