@@ -79,19 +79,19 @@ namespace {
         void commit() {
             if ( !m_cnx )
                 throw fostlib::exceptions::transaction_fault( L"This transaction has already been used" );
-	        try {
+            try {
                 if ( m_commit )
                     m_cnx->CommitTrans();
                 m_cnx = NULL;
                 if ( fostlib::dbconnection::c_commitCount.value() )
                     c_ado_interface.next_id( m_connection, fostlib::dbconnection::c_commitCountDomain.value() );
-	        } catch ( _com_error &c ) {
+            } catch ( _com_error &c ) {
                 m_cnx = NULL;
                 throw fostlib::exceptions::com_error( c, L"COM error during transaction commit" );
-	        } catch ( ... ) {
+            } catch ( ... ) {
                 m_cnx = NULL;
                 throw fostlib::exceptions::transaction_fault( L"Unknown error during transaction commit" );
-	        }
+            }
         }
         void rollback() {
             try {
@@ -113,65 +113,65 @@ namespace {
         : recordset( cmd ), m_rs( rs ) {
             // Build field list so we don't need to use the ADO mappings
             for ( long c( 0 ); c < m_rs->Fields->Count; ++c )
-	            m_fields[ fostlib::coerce< fostlib::string >( m_rs->Fields->Item[ c ]->Name ) ] = c;
+                m_fields[ fostlib::coerce< fostlib::string >( m_rs->Fields->Item[ c ]->Name ) ] = c;
             m_values = std::vector< fostlib::nullable< fostlib::json > >( m_fields.size() );
         }
         RSInterface( const fostlib::dbconnection &dbc, const fostlib::sql::statement &cmd )
         : recordset( cmd ) {
             fostlib::string rw( L"read" );
             try {
-	            m_cnx.CreateInstance( __uuidof( ADODB::Connection ) );
+                m_cnx.CreateInstance( __uuidof( ADODB::Connection ) );
                 m_cnx->CommandTimeout = fostlib::setting< int >::value( L"Database", L"ReadCommandTimeout" );
                 m_cnx->Open( dbc.configuration()[ L"read" ].get< fostlib::string >().value().c_str(), L"", L"", ADODB::adConnectUnspecified );
-	            _variant_t res;
-	            m_rs = m_cnx->Execute( cmd.underlying().c_str(), &res, ADODB::adOptionUnspecified );
-	            // Build field list so we don't need to use the ADO mappings
-	            for ( long c( 0 ); c < m_rs->Fields->Count; ++c )
-		            m_fields[ fostlib::coerce< fostlib::string >( m_rs->Fields->Item[ c ]->Name ) ] = c;
+                _variant_t res;
+                m_rs = m_cnx->Execute( cmd.underlying().c_str(), &res, ADODB::adOptionUnspecified );
+                // Build field list so we don't need to use the ADO mappings
+                for ( long c( 0 ); c < m_rs->Fields->Count; ++c )
+                    m_fields[ fostlib::coerce< fostlib::string >( m_rs->Fields->Item[ c ]->Name ) ] = c;
                 m_values = std::vector< fostlib::nullable< fostlib::json > >( m_fields.size() );
             } catch ( fostlib::exceptions::exception &e ) {
-	            e.info() << L"Failure in execute on database connection\n" <<
+                e.info() << L"Failure in execute on database connection\n" <<
                         rw << L" connection\n" << cmd << '\n' << fostlib::json::unparse( dbc.configuration()[ L"read" ], true ) << std::endl;
-	            throw;
+                throw;
             } catch ( _com_error &c ) {
-	            if ( cmd.empty() )
-		            throw fostlib::exceptions::com_error( c );
-	            else
-		            throw fostlib::exceptions::com_error( c, rw + L" connection\n" + cmd.underlying() );
+                if ( cmd.empty() )
+                    throw fostlib::exceptions::com_error( c );
+                else
+                    throw fostlib::exceptions::com_error( c, rw + L" connection\n" + cmd.underlying() );
             }
-	    }
-	    ~RSInterface()
-	    try {
-		    // No where in the help does it explicitly state that a recordset is closed for you on
-		    // release of the COM pointer. Indeed the C++ examples show "ADODB::Recordset::Close()" and
-		    // "ADODB::Connection::Close()" being called. So taking my lead from there... Also the help
-		    // strongly implies that you get handle leaks if you don't call "ADODB::*::Close()".
-		    // Maybe not calling close can cause instability?
-		    // We only need to close read recordsets. Write ones are in out system, never read from, so are never opened, therefore don't need to be closed.
-		    // Indeed closing an unopened recordset will throw a COM exception. (I tried...)
-		    m_rs->Close();
-		    m_cnx->Close();
-		    m_rs = ADODB::_RecordsetPtr();
-		    m_cnx = ADODB::_ConnectionPtr();
-	    } catch ( _com_error &c ) {
+        }
+        ~RSInterface()
+        try {
+            // No where in the help does it explicitly state that a recordset is closed for you on
+            // release of the COM pointer. Indeed the C++ examples show "ADODB::Recordset::Close()" and
+            // "ADODB::Connection::Close()" being called. So taking my lead from there... Also the help
+            // strongly implies that you get handle leaks if you don't call "ADODB::*::Close()".
+            // Maybe not calling close can cause instability?
+            // We only need to close read recordsets. Write ones are in out system, never read from, so are never opened, therefore don't need to be closed.
+            // Indeed closing an unopened recordset will throw a COM exception. (I tried...)
+            m_rs->Close();
+            m_cnx->Close();
+            m_rs = ADODB::_RecordsetPtr();
+            m_cnx = ADODB::_ConnectionPtr();
+        } catch ( _com_error &c ) {
             throw fostlib::exceptions::com_error( c, L"Closing ADO recordset" );
-	    }
+        }
 
         bool eof() const {
-	        try {
-		        return m_rs->adoEOF ? true : false;
-	        } catch ( _com_error &c ) {
+            try {
+                return m_rs->adoEOF ? true : false;
+            } catch ( _com_error &c ) {
                 throw fostlib::exceptions::com_error( c, L"Checking for EOF on recordset" );
-	        }
+            }
         }
 
         void moveNext() {
-        	try {
-		        m_rs->MoveNext();
+            try {
+                m_rs->MoveNext();
                 m_values = std::vector< fostlib::nullable< fostlib::json > >( m_fields.size() );
-	        } catch( _com_error &c ) {
+            } catch( _com_error &c ) {
                 throw fostlib::exceptions::com_error( c, L"Moving to next record" );
-	        }
+            }
         }
 
         std::size_t fields() const {
@@ -179,16 +179,16 @@ namespace {
         }
 
         const fostlib::string &name( std::size_t f ) const {
-	        for ( std::map< fostlib::string, std::size_t >::const_iterator i( m_fields.begin() ); i != m_fields.end(); ++i )
-		        if ( (*i).second == f )
-			        return (*i).first;
-	        throw fostlib::exceptions::unexpected_eof( L"Field number is beyond number of actual fields" );
+            for ( std::map< fostlib::string, std::size_t >::const_iterator i( m_fields.begin() ); i != m_fields.end(); ++i )
+                if ( (*i).second == f )
+                    return (*i).first;
+            throw fostlib::exceptions::unexpected_eof( L"Field number is beyond number of actual fields" );
         }
 
         const fostlib::json &field( std::size_t i ) const {
-	        if ( i >= m_values.size() )
+            if ( i >= m_values.size() )
                 throw fostlib::exceptions::out_of_range< std::size_t >( L"Ordinal number is too high for the number of values in the recordset", 0, m_values.size(), i );
-	        try {
+            try {
                 if ( m_values[ i ].isnull() ) {
                     _variant_t value( m_rs->Fields->Item[ _variant_t( long( i ) ) ]->Value );
                     if ( value.vt == VT_BOOL ) {
@@ -199,23 +199,23 @@ namespace {
                         m_values[ i ] = f.isnull() ? fostlib::json() : fostlib::json( f.value() );
                     }
                 }
-		        return m_values[ i ].value();
-	        } catch ( _com_error &c ) {
+                return m_values[ i ].value();
+            } catch ( _com_error &c ) {
                 throw fostlib::exceptions::com_error( c, L"Fetching database recordset ordinal: " + fostlib::coerce< fostlib::string >( i ) );
-	        }
+            }
         }
         const fostlib::json &field( const fostlib::string &name ) const {
             std::map< fostlib::string, std::size_t >::const_iterator pos( m_fields.find( name ) );
-	        if ( pos == m_fields.end() )
+            if ( pos == m_fields.end() )
                 throw fostlib::exceptions::null( L"Cannot find the field", name );
-	        else {
-		        try {
-			        return field( (*pos).second );
+            else {
+                try {
+                    return field( (*pos).second );
                 } catch ( fostlib::exceptions::com_error &e ) {
                     e.info() << L"Fetching the database field: " << name << std::endl;
-			        throw;
-		        }
-	        }
+                    throw;
+                }
+            }
         }
 
         fostlib::json to_json() const {
