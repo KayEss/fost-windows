@@ -1,9 +1,9 @@
 path-constant TOP : . ;
 include $(TOP)/../boost-version.jam ;
+include ../fost-base/fost.jam ;
 
 use-project fost-base : ../fost-base/ ;
 use-project fost-orm : ../fost-orm/ ;
-include ../fost-base/fost.jam ;
 
 fost-project fost-windows
     :
