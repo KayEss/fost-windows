@@ -2,5 +2,6 @@
 fost-smoke-test fost-ado-test-smoke
     :
         ../../../fost-orm/Cpp/fost-schema/
+    :
         ado-express.cpp
     ;
