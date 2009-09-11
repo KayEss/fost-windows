@@ -5,3 +5,23 @@ fost-smoke-test fost-ado-test-smoke
     :
         ado-express.cpp
     ;
+
+run ../../../fost-orm/Cpp/fost-schema-test//fost-schema-test-dyndriver
+    :
+        ado
+    :
+        ../fost-ado//fost-ado
+    :
+    :
+        fost-ado-driver-load
+    ;
+
+run ../../../fost-orm/Cpp/fost-schema-test//fost-schema-test-dyndriver
+    :
+        ado.f3
+    :
+        ../fost-ado//fost-ado
+    :
+    :
+        fost-ado-f3-driver-load
+    ;
