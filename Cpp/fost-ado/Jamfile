@@ -1,32 +1,8 @@
 
-lib fost-ado
+fost-lib fost-ado
     :
-        ../../../Boost//boost-date_time-dll
-        ../../../Boost//boost-thread-dll
-        ../../../fost-base/Cpp/fost-core/
         ../../../fost-orm/Cpp/fost-schema/
         ../../../fost-orm/Cpp/fost-sql/
         ado-driver.cpp
         ado-f3-driver.cpp
-    :
-        <include>../include
-    ;
-
-install ../../../dist/lib
-    :
-        fost-ado
-    :
-        <target-os>linux:<install-dependencies>on
-        <target-os>linux:<install-type>LIB
-        <target-os>darwin:<install-dependencies>on
-        <target-os>darwin:<install-type>LIB
-        <target-os>windows:<install-type>XXX
-    ;
-
-install ../../../dist/bin :
-        fost-ado
-    :
-        <install-dependencies>on
-        <install-type>EXE
-        <target-os>windows:<install-type>LIB
     ;
