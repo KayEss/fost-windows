@@ -2,7 +2,7 @@
 fost-lib fost-ado
     :
         ../../../fost-orm/Cpp/fost-schema/
-        ../../../fost-orm/Cpp/fost-sql/
+        ../../../fost-orm//fost-sql
         ado-driver.cpp
         ado-f3-driver.cpp
     ;

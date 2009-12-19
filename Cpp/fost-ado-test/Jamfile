@@ -1,10 +1,11 @@
 
-fost-smoke-test fost-ado-test-smoke
-    :
-        ../../../fost-orm/Cpp/fost-schema/
-    :
-        ado-express.cpp
-    ;
+#fost-smoke-test fost-ado-test-smoke
+#    :
+#        ../../../fost-orm/Cpp/fost-schema/
+#        ../fost-ado//fost-ado
+#    :
+#        ado-express.cpp
+#    ;
 
 run ../../../fost-orm/Cpp/fost-schema-test//fost-schema-test-dyndriver
     :
