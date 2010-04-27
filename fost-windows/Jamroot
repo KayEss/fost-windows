@@ -25,11 +25,14 @@ explicit examples ;
 alias fost :
         ../fost-base//fost
         ../fost-orm//fost
+        Cpp/fost-ado
+        #Cpp/fost-isapi
     ;
 
 alias tests :
         ../fost-base//tests
         ../fost-orm//tests
+        Cpp/fost-ado-tests
     ;
 explicit tests ;
 
