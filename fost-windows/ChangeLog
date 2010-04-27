@@ -1,0 +1,8 @@
+2010-04-27  Kirit Saelensminde  <kirit@felspar.com>
+ Build
+ - Fixed the build file. For some reason the build targets weren't all
+   present.
+
+2010-03-22  Kirit Saelensminde  <kirit@felspar.com>
+ ChangeLog
+ - Added ChangeLog
