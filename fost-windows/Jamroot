@@ -32,7 +32,7 @@ alias fost :
 alias tests :
         ../fost-base//tests
         ../fost-orm//tests
-        Cpp/fost-ado-tests
+        Cpp/fost-ado-test
     ;
 explicit tests ;
 
