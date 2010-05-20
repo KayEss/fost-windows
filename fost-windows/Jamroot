@@ -10,6 +10,36 @@ fost-project fost-windows
         <include>../fost-orm/Cpp/include
     ;
 
-build-project ../fost-base/Cpp/fost-ftest/ ;
-build-project Cpp/fost-ado/ ;
-build-project Cpp/fost-ado-test/ ;
+alias ado :
+        Cpp/fost-ado
+        Cpp/fost-ado-test
+    ;
+explicit ado ;
+
+alias examples :
+        ../fost-base//examples
+        ../fost-orm//examples
+    ;
+explicit examples ;
+
+alias fost :
+        ../fost-base//fost
+        ../fost-orm//fost
+        Cpp/fost-ado
+        #Cpp/fost-isapi
+    ;
+
+alias tests :
+        ../fost-base//tests
+        ../fost-orm//tests
+        Cpp/fost-ado-test
+    ;
+explicit tests ;
+
+alias all :
+        ado
+        examples
+        fost
+        tests
+    ;
+explicit all ;
